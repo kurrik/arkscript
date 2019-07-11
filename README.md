@@ -7,7 +7,7 @@ Install via `Resources > Libraries` in the Apps Script editor.
 Project keys for each library:
 
 |Name|Key|
-----------
+|----|---|
 |ArkSheets|`MyupJYJuHYixgf3e7jmtR93yhG7WbtBRk`|
 
 ## References
