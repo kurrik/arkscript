@@ -58,10 +58,18 @@ function getHeaderRowsMap_(sheet) {
   return map;
 }
 
+interface ArkCell {
+  value: any;
+  frozen: boolean;
+  hidden: boolean;
+  comment: string;
+  formula: string;
+}
+
 // Note, values not guaranteed to be strings.
 // Per https://developers.google.com/apps-script/reference/spreadsheet/range#getvalues
 // "The values may be of type Number, Boolean, Date, or String, depending on the value of the cell."
-function getCellSchema_(value, comment, formula) {
+function getCellSchema_(value: any, comment: string, formula: string): ArkCell {
   return {
     'value': value,
     'frozen': false,

@@ -5,15 +5,26 @@
 /**
  * Returns a range covering all data in a given row.
  *
- * @param {Spreadsheet} sheet The spreadsheet to return a row from.
- * @param {number} row The 1-indexed row to return a range for.
- * @return {Range} The range associated with the row.
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet The spreadsheet to return a row from.
+ * @param {GoogleAppsScript.Integer} row The 1-indexed row to return a range for.
+ * @return {GoogleAppsScript.Spreadsheet.Range} The range associated with the row.
  */
-function getRowRange(sheet, row) {
+function getRowRange(
+    sheet: GoogleAppsScript.Spreadsheet.Sheet,
+    row: GoogleAppsScript.Integer
+  ) : GoogleAppsScript.Spreadsheet.Range {
   return sheet.getRange(row, 1, 1, sheet.getLastColumn());
 }
 
-function getRow(sheet, row) {
+interface ArkSheetsRow {
+  sheet: string,
+  row: number,
+  columns: { [key: string]: ArkCell; }
+}
+function getRow(
+    sheet: GoogleAppsScript.Spreadsheet.Sheet, 
+    row: GoogleAppsScript.Integer
+  ) : ArkSheetsRow {
   const cols = getHeaderCols_(sheet);
   const frozenColumnCount = sheet.getFrozenColumns();
   const range = getRowRange(sheet, row);

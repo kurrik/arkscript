@@ -1,7 +1,9 @@
 # arkscript
 Utilities for AppsScript which I genearally find useful.
 
-## Using
+## Client Library
+
+### Using
 Install via `Resources > Libraries` in the Apps Script editor.
 
 Project keys for each library:
@@ -9,6 +11,14 @@ Project keys for each library:
 |Name|Key|
 |----|---|
 |ArkSheets|`MyupJYJuHYixgf3e7jmtR93yhG7WbtBRk`|
+
+## Developing arkscript
+
+### Install deps
+
+    npm install -g @google/clasp
+
+    yarn install
 
 ## References
 Published using these guides:
@@ -18,5 +28,7 @@ Published using these guides:
 Creating a standalone project:
 * https://developers.google.com/apps-script/guides/projects
 
-Using the clasp tool:
+Using the clasp tool and typescript:
 * https://developers.google.com/apps-script/guides/clasp
+* https://developers.google.com/apps-script/guides/typescript
+
