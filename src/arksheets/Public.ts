@@ -10,21 +10,23 @@
  * @return {GoogleAppsScript.Spreadsheet.Range} The range associated with the row.
  */
 function getRowRange(
-    sheet: GoogleAppsScript.Spreadsheet.Sheet,
-    row: GoogleAppsScript.Integer
-  ) : GoogleAppsScript.Spreadsheet.Range {
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  row: GoogleAppsScript.Integer
+) : GoogleAppsScript.Spreadsheet.Range {
   return sheet.getRange(row, 1, 1, sheet.getLastColumn());
 }
 
-interface ArkSheetsRow {
-  sheet: string,
-  row: number,
-  columns: { [key: string]: ArkCell; }
-}
+/**
+ * Returns a representation of data in a row.
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet The spreadsheet to return a row from.
+ * @param {GoogleAppsScript.Integer} row The 1-indexed row to return a range for.
+ * @return {ArkSheetsRow} Representation of the row data where cells are indexed by column header.
+ */
 function getRow(
-    sheet: GoogleAppsScript.Spreadsheet.Sheet, 
-    row: GoogleAppsScript.Integer
-  ) : ArkSheetsRow {
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  row: GoogleAppsScript.Integer
+) : ArkSheetsRow {
   const cols = getHeaderCols_(sheet);
   const frozenColumnCount = sheet.getFrozenColumns();
   const range = getRowRange(sheet, row);
@@ -45,11 +47,31 @@ function getRow(
   return item;
 }
 
-function getColumnRange(sheet, col) {
+/**
+ * Returns a range covering all data in a given column.
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet The spreadsheet to return a column from.
+ * @param {GoogleAppsScript.Integer} col The 1-indexed column to return a range for.
+ * @return {GoogleAppsScript.Spreadsheet.Range} The range associated with the column.
+ */
+function getColumnRange(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  col: GoogleAppsScript.Integer
+): GoogleAppsScript.Spreadsheet.Range {
   return sheet.getRange(1, col, sheet.getLastRow(), 1);
 }
 
-function getColumn(sheet, col) {
+/**
+ * Returns a representation of data in a column.
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet The spreadsheet to return a column from.
+ * @param {GoogleAppsScript.Integer} col The 1-indexed column to return a range for.
+ * @return {ArkSheetsColumn} Representation of the column data where cells are indexed by row header.
+ */
+function getColumn(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  col: GoogleAppsScript.Integer
+): ArkSheetsColumn {
   const rows = getHeaderRows_(sheet);
   const frozenRowCount = sheet.getFrozenRows();
   const range = getColumnRange(sheet, col);
@@ -70,40 +92,85 @@ function getColumn(sheet, col) {
   return item;
 }
 
-function getColumnByHeader(sheet, colHeader) {
+/**
+ * Returns a representation of data in the column with the specified header value.
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet The spreadsheet to return a column from.
+ * @param {string} colHeader The header text of the column to return data for.
+ * @return {ArkSheetsColumn} Representation of the column data where cells are indexed by row header.
+ */
+function getColumnByHeader(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  colHeader: string
+): ArkSheetsColumn {
   const cols = getHeaderCols_(sheet);
   const colIndex = cols.indexOf(colHeader);
   if (colIndex > -1) {
     return getColumn(sheet, colIndex + 1);
   }
-  return {};
+  return {
+    'sheet': sheet.getName(),
+    'col': -1,
+    'rows': {},
+  };
 }
 
-function writeSparseColumn(sheet, col, data) {
+/**
+ * Writes data indexed by row header to a specific column.
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet The spreadsheet to write to.
+ * @param {GoogleAppsScript.Integer} col The 1-indexed column to write to.
+ * @param {KeyedData} rows A map of string keys (row headers) to cell data to write.
+ */
+function writeSparseColumn(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  col: GoogleAppsScript.Integer,
+  rows: KeyedData
+): void {
   const map = getHeaderRowsMap_(sheet);
-  for (var key in data.rows) {
+  for (var key in rows) {
     if (map.hasOwnProperty(key)) {
       var rowIndex = map[key];
-      var cell = data.rows[key];
+      var cell = rows[key];
       var cellRange = sheet.getRange(rowIndex + 1, col);
       writeRange_(cellRange, cell);
     }
   }
 }
 
-function writeSparseRow(sheet, row, data) {
+/**
+ * Writes data indexed by column header to a specific row.
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet The spreadsheet to write to.
+ * @param {GoogleAppsScript.Integer} row The 1-indexed row to write to.
+ * @param {KeyedData} columns A map of string keys (column headers) to cell data to write.
+ */
+function writeSparseRow(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  row: GoogleAppsScript.Integer,
+  columns: KeyedData
+): void {
   const map = getHeaderColsMap_(sheet);
-  for (var key in data.columns) {
+  for (var key in columns) {
     if (map.hasOwnProperty(key)) {
       var colIndex = map[key];
-      var cell = data.columns[key];
+      var cell = columns[key];
       var cellRange = sheet.getRange(row, colIndex + 1);
       writeRange_(cellRange, cell);
     }
   }
 }
 
-function writeSheetValues(sheet, data) {
+/**
+ * Clears a spreadsheet and replaces all of its values with the supplied data.
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet The spreadsheet to write to.
+ * @param {any[][]} data Data to write.  This is a 2D array of values.
+ */
+function writeSheetValues(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  data: any[][]
+): void {
   sheet.clear();
   const range = sheet.getRange(1, 1, data.length, data[0].length);
   range.setValues(data);

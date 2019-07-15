@@ -3,5 +3,10 @@
 		{
 			"path": "/Users/kurrik/workspace/arkscript"
 		}
-	]
+	],
+	"settings": {
+		"editor.tabSize": 2,
+		"editor.renderWhitespace": "boundary",
+		"files.trimTrailingWhitespace": true
+	}
 }

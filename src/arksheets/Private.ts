@@ -13,7 +13,7 @@ function getHeaderCols_(sheet) {
     if (value) {
       cols.push(value.toString().toLowerCase());
     } else {
-      cols.push("");
+      cols.push((i+1).toString());
     }
   }
   return cols;
@@ -30,7 +30,7 @@ function getHeaderRows_(sheet) {
     if (value) {
       rows.push(value.toString().toLowerCase());
     } else {
-      rows.push("")
+      rows.push((i+1).toString());
     }
   }
   return rows;
@@ -56,14 +56,6 @@ function getHeaderRowsMap_(sheet) {
     map[rows[i]] = i;
   }
   return map;
-}
-
-interface ArkCell {
-  value: any;
-  frozen: boolean;
-  hidden: boolean;
-  comment: string;
-  formula: string;
 }
 
 // Note, values not guaranteed to be strings.
