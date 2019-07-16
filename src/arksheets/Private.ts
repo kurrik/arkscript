@@ -71,11 +71,15 @@ function getCellSchema_(value: any, comment: string, formula: string): ArkCell {
   }
 }
 
-function writeRange_(range, data) {
+function writeRange_(range: GoogleAppsScript.Spreadsheet.Range, data: ArkCell) {
   if (data.formula && data.formula !== "") {
     range.setFormula(data.formula.toString());
   } else {
-    range.setValue(data.value.toString());
+    if (data.value instanceof Date) {
+      range.setValue(data.value);
+    } else {
+      range.setValue(data.value.toString());
+    }
   }
   if (data.comment && data.comment !== "") {
     range.setNote(data.comment);
